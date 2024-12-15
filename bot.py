@@ -1,9 +1,4 @@
-#!/usr/bin/env python3
-# Simple Discord SelfBot
-# Created By Viloid ( github.com/vsec7 )
-# Use At Your Own Risk
-
-import requests, random, sys, yaml, time
+import requests, random, sys, yaml, time, openai
 
 class Discord:
 
@@ -35,9 +30,17 @@ def quote():
     u = requests.get("https://raw.githubusercontent.com/lakuapik/quotes-indonesia/master/raw/quotes.min.json").json()
     return random.choice(list(u))['quote']
 
-def simsimi(lc, txt):
-    u = requests.post("https://api.simsimi.vn/v1/simtalk", data={ 'lc': lc, 'text': txt}).json()
-    return u['message']
+def gpt_reply(prompt, model="gpt-3.5-turbo"):
+    try:
+        # Customize prompt to encourage casual and adaptive responses
+        custom_prompt = f"You're a fun, chill AI buddy. Reply casually and adapt to this style: {prompt}"
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=[{"role": "user", "content": custom_prompt}]
+        )
+        return response['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        return f"[ERROR] AI response failed: {e}"
 
 def main():
     with open('config.yaml') as cfg:
@@ -51,25 +54,21 @@ def main():
         print("[!] Please provide channel id at config.yaml!")
         sys.exit()
 
+    openai.api_key = conf.get('OPENAI_API_KEY')
+    if not openai.api_key:
+        print("[!] Please provide OpenAI API key at config.yaml!")
+        sys.exit()
+
     mode = conf['MODE']
-    simi_lc = conf['SIMSIMI_LANG']
     delay = conf['DELAY']
     del_after = conf['DEL_AFTER']
-    repost_last = conf['REPOST_LAST_CHAT']
-                
+
     if not mode: 
         mode = "quote"
         
-    if not simi_lc:
-        simi_lc = "id"
-        
-    if not repost_last: 
-        repost_last = "100"
-    
     while True:
         for token in conf['BOT_TOKEN']:
             try:
-
                 for chan in conf['CHANNEL_ID']:
 
                     Bot = Discord(token)
@@ -83,41 +82,25 @@ def main():
                             Bot.deleteMessage(chan, send['id'])
                             print("[{}][DELETE] {}".format(me, send['id']))
 
-                    elif mode == "repost":
-                        res = Bot.getMessage(chan, random.randint(1,repost_last))
-                        getlast = list(reversed(res))[0]                    
-                        send = Bot.sendMessage(chan, getlast['content'])
-                        print("[{}][{}][REPOST] {}".format(me, chan, getlast['content']))
-                        if del_after:
-                            Bot.deleteMessage(chan, send['id'])
-                            print("[{}][DELETE] {}".format(me, send['id']))
-                        
-                    elif mode == "simsimi":
+                    elif mode == "ai_chat":
                         res = Bot.getMessage(chan, "1")
                         getlast = list(reversed(res))[0]                
-                        simi = simsimi(simi_lc, getlast['content'])
+                        user_message = getlast['content']
+                        ai_reply = gpt_reply(user_message)
 
                         if conf['REPLY']:
-                            send = Bot.replyMessage(chan, getlast['id'], simi)
-                            print("[{}][{}][SIMSIMI] {}".format(me, chan, simi))
+                            send = Bot.replyMessage(chan, getlast['id'], ai_reply)
+                            print("[{}][{}][AI_REPLY] {}".format(me, chan, ai_reply))
                         else:
-                            send = Bot.sendMessage(chan, simi)
-                            print("[{}][{}][SIMSIMI] {}".format(me, chan, simi))
+                            send = Bot.sendMessage(chan, ai_reply)
+                            print("[{}][{}][AI_REPLY] {}".format(me, chan, ai_reply))
 
                         if del_after:
                             Bot.deleteMessage(chan, send['id'])
                             print("[{}][DELETE] {}".format(me, send['id']))
 
-                    elif mode == "custom":
-                        c = random.choice(open("custom.txt").readlines())
-                        send = Bot.sendMessage(chan, c)
-                        print("[{}][{}][CUSTOM] {}".format(me, chan, c))            
-                        if del_after:
-                            Bot.deleteMessage(chan, send['id'])
-                            print("[{}][DELETE] {}".format(me, send['id']))
-
-            except:
-                print(f"[Error] {token} : INVALID TOKEN / KICKED FROM GUILD!")
+            except Exception as e:
+                print(f"[Error] {token} : {e}")
         
         print("-------[ Delay for {} seconds ]-------".format(delay))
         time.sleep(delay)
@@ -127,4 +110,3 @@ if __name__ == '__main__':
         main()
     except Exception as err:
         print(f"{type(err).__name__} : {err}")
-        

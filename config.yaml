@@ -1,12 +1,11 @@
 BOT_TOKEN: 
-  - ODE3MzkzOTQ4xxxxxxxxxxxxxxxxxxxx
-  - ODk1NTEyMDExxxxxxxxxxxxxxxxxxxxx
+  - ODY0OXXXXX # your_discord_bot_token
 CHANNEL_ID: 
-  - 10300xxxxxxxxxxxxxx
-  - 87751xxxxxxxxxxxxxx
-MODE: custom
-REPLY: 
-SIMSIMI_LANG: en
-DELAY: 10
-DEL_AFTER: 
+  - 12740XXXXXXXX # your_channel_id
+MODE: ai_chat
+OPENAI_API_KEY: sk-projXXXXXXXXXX # your_openai_api_key
+SIMSIMI_LANG: en  # 
+DELAY: 60
+DEL_AFTER: false
+REPLY: true
 REPOST_LAST_CHAT: 100

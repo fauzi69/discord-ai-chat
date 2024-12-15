@@ -1,66 +1,101 @@
-# Discord SelfBot
+Discord AI Chat Bot
 
-Simple Discord Self Bot Python version
+This script allows you to set up a Discord bot that can interact with users in two main modes: sending inspirational quotes or acting as a chill and adaptive AI buddy using OpenAI's GPT model. Perfect for automating casual chats or spreading good vibes in your Discord server!
 
-Created By viloid (github.com/vsec7)
+Features
 
-*** NOTE : USE AT YOUR OWN RISK! ***
+Quote Mode: Sends random inspirational quotes in the channel.
 
-## • Features
-- Send Quote message
-- Send Response Simsimi message
-- Send Repost message from channel chat history
-- Send select random line from custom.txt
-- Auto Delete message
+AI Chat Mode: Responds to the latest message in the channel with a casual, adaptive reply.
 
-## • Requirements
-- Python3
+Message Deletion: Optionally delete bot messages after a specified time.
 
-## • Installation
+Customizable Delay: Set intervals between actions.
 
-```bash
-git clone https://github.com/vsec7/DiscordSelfbot.git
-```
+Flexible Configuration: Manage tokens, channel IDs, and settings through config.yaml.
 
-## • Edit Configurations *config.yaml* file
+Requirements
 
-```env
-BOT_TOKEN:                      # Discord SelfBot Token *Required
-    - Discord Token 1           # You can add multiple discord token
-    - Discord Token 2                     
-CHANNEL_ID:                     # channel id *Required
-    - Channel Id 1
-    - Channel Id 2              # You can add multiple channel id
-MODE:                           # mode: (quote, repost, simsim, custom) *Leave blank Default: quote
-REPLY: Y                        # For simsimi mode only *Leave blank if you dont use it
-SIMSIMI_LANG: 				    # Simsimi Language (id/en) *Leave blank Default: id
-DELAY: 60	                    # Delay per send massage *second
-DEL_AFTER: Y                    # Delete after send *Leave blank if you dont use it 
-REPOST_LAST_CHAT: 100           # Repost from last ?n chat in channel          
-```
-## • How to get Discord SelfBot Token?
+Python 3.7+
 
-```
-javascript:(()=>{var t=document.body.appendChild(document.createElement`iframe`).contentWindow.localStorage.token.replace(/["]+/g, '');prompt('Get Selfbot Discord Token by github.com/vsec7', t)})();
-```
+Libraries:
 
-[<kbd>DETAILS CLICK HERE</kbd>](https://gist.github.com/vsec7/12066af3f704bd337c52c30f4c492ba2)
+requests
 
-Paste in your url bar when open discord desktop browser
+pyyaml
 
-word **javascript** may removed by browser , you can type it manual.
+openai
 
-or you can create bookmark and paste this js inject to url bookmark, and click when open discord web
+A Discord bot token.
 
-## • How to Run?
-```bash
-cd DiscordSelfbot
-pip install -r requirements.txt
+An OpenAI API key.
+
+Installation
+
+Clone this repository or download the script.
+
+Install dependencies:
+
+pip install requests pyyaml openai
+
+edit a config.yaml file in the same directory as the script with the following structure:
+
+BOT_TOKEN:
+  - "your_discord_bot_token"
+
+CHANNEL_ID:
+  - "your_channel_id"
+
+OPENAI_API_KEY: "your_openai_api_key"
+
+MODE: "ai_chat"  # Options: "quote" or "ai_chat"
+DELAY: 10         # Delay in seconds between actions
+DEL_AFTER: false  # Delete bot messages after sending (true/false)
+REPLY: true       # Reply to the last message in the channel (true/false)
+
+Usage
+
+Run the script:
+
 python bot.py
-```
 
-## • Donate
+The bot will start performing actions based on the mode specified in config.yaml:
 
-SOL Address : viloid.sol
+Quote Mode: Sends random inspirational quotes.
 
-BSC Address : 0xd3de361b186cc2Fc0C77764E30103F104a6d6D07
+AI Chat Mode: Fetches the latest message in the channel and responds casually.
+
+Customization
+
+To adjust the AI's tone, modify the gpt_reply function's prompt to fit your desired personality or language style.
+
+You can enable or disable message deletion and reply behavior in config.yaml.
+
+Example config.yaml
+
+BOT_TOKEN:
+  - OTYzMjxxx
+
+CHANNEL_ID:
+  - 123456xxxx
+
+OPENAI_API_KEY: sk-xxxxxxxx
+
+MODE: ai_chat
+DELAY: 5
+DEL_AFTER: true
+REPLY: true
+
+Troubleshooting
+
+Invalid Token or Permissions: Ensure the bot token and channel ID are correct. Make sure the bot has permission to send messages in the specified channel.
+
+Rate Limits: The bot might get rate-limited if performing too many actions. Increase the DELAY value if needed.
+
+API Errors: Verify your OpenAI API key and ensure it's active.
+
+License
+
+This script is open-source and free to use. Modify it as needed to suit your requirements.
+
+Enjoy your AI-powered Discord bot! 🎉
